@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Проверка объекта-прямоугольника</title>
-</head>
-<body>
-  <h1>Откройте консоль браузера (F12) для просмотра результатов</h1>
-  
-  <script>
-  class Rectangle {
+class Rectangle {
     constructor(topLeftX, topLeftY, bottomRightX, bottomRightY) {
       this.topLeft = { x: topLeftX, y: topLeftY };
       this.bottomRight = { x: bottomRightX, y: bottomRightY };
@@ -81,7 +72,3 @@
   rect.move(5, -3);
   rect.printInfo();
   console.log("Точка (12,15) внутри?", rect.isPointInside(12, 15));
-  
-  </script>
-</body>
-</html>
