@@ -1,19 +1,17 @@
 import math
 
-
 def calculate_error():
     print("Калькулятор погрешностей")
-    print("=" * 30)
+    print("=" * 40)
     print("Операции:")
-    print("1. Сложение (+)")
-    print("2. Вычитание (-)")
-    print("3. Умножение (*)")
-    print("4. Деление (/)")
-    print("5. Возведение в степень (^)")
-    print("6. Квадратный корень (√)")
-    print("=" * 30)
-
-
+    print("1. Сложение (a + b)")
+    print("2. Вычитание (a - b)")
+    print("3. Умножение (a × b)")
+    print("4. Деление (a / b)")
+    print("5. Возведение в степень (a^n)")
+    print("6. Квадратный корень (√a)")
+    print("=" * 40)
+    
     while True:
         try:
             choice = int(input("Выберите операцию (1-6): "))
@@ -23,124 +21,172 @@ def calculate_error():
                 print("Пожалуйста, введите число от 1 до 6")
         except ValueError:
             print("Пожалуйста, введите целое число")
-
-
-    if choice == 6:
-        print("\nИзвлечение квадратного корня")
+    
+    if choice == 5:  # Возведение в степень
+        print("\n--- Возведение в степень a^n ---")
         while True:
             try:
-                x = float(input("Введите число: "))
-                dx = float(input("Введите абсолютную погрешность числа: "))
-                if x < 0:
+                a = float(input("Введите число a: "))
+                da = float(input("Введите абсолютную погрешность Δa: "))
+                n = float(input("Введите степень n: "))
+                
+                if da < 0:
+                    print("Погрешность не может быть отрицательной")
+                    continue
+                break
+            except ValueError:
+                print("Пожалуйста, введите числа")
+        
+        # Вычисление по формулам из таблицы
+        # a^n
+        result = a ** n
+        
+        # Абсолютная погрешность: Δ(a^n) = n * a^(n-1) * Δa
+        if n != 0:
+            error_abs = abs(n) * (abs(a) ** (n - 1)) * da
+        else:
+            error_abs = 0  # a^0 = 1 всегда, погрешность 0
+        
+        # Относительная погрешность: δ(a^n) = n * δ(a) = n * (Δa/|a|)
+        if a != 0:
+            error_rel = abs(n) * (da / abs(a))
+        else:
+            error_rel = 0
+        
+        print(f"a = {a} ± {da}")
+        print(f"n = {n}")
+        print(f"a^{n} = {result:.6f}")
+        print(f"Абсолютная погрешность  = {error_abs:.6f}")
+        print(f"Относительная погрешность  = {error_rel:.6f}")
+        print(f"Итог: {result:.6f} ± {error_abs:.6f}")
+        
+    elif choice == 6:  # Квадратный корень
+        print("\n--- Извлечение квадратного корня √a ---")
+        while True:
+            try:
+                a = float(input("Введите число a: "))
+                da = float(input("Введите абсолютную погрешность Δa: "))
+                
+                if a < 0:
                     print("Нельзя извлечь корень из отрицательного числа")
                     continue
-                if dx < 0:
+                if da < 0:
                     print("Погрешность не может быть отрицательной")
                     continue
                 break
             except ValueError:
                 print("Пожалуйста, введите числа")
-
-
-        result = math.sqrt(x)
-
-        error = (1 / (2 * math.sqrt(x))) * dx if x > 0 else 0
-
-        print("\nРезультат:")
-        print(f"√({x} ± {dx}) = {result:.6f} ± {error:.6f}")
-
-    else:
-        print("\nБинарная операция")
+        
+        n = 2  # квадратный корень
+        result = math.sqrt(a)
+        
+        if a > 0:
+            error_abs = da / (n * (a ** ((n - 1) / n)))
+        else:
+            error_abs = 0
+        
+        if a != 0:
+            error_rel = (da / abs(a)) / n
+        else:
+            error_rel = 0
+        
+        print("\nРезультат по формулам из таблицы:")
+        print(f"a = {a} ± {da}")
+        print(f"√a = {result:.6f}")
+        print(f"Абсолютная погрешность Δ = {error_abs:.6f}")
+        print(f"Относительная погрешность δ = {error_rel:.6f}")
+        print(f"Итог: {result:.6f} ± {error_abs:.6f}")
+        
+    else:  # Операции с двумя числами: +, -, ×, /
+        print("\n--- Операция с двумя числами ---")
         while True:
             try:
-                x = float(input("Введите первое число: "))
-                dx = float(input("Введите абсолютную погрешность первого числа: "))
-                y = float(input("Введите второе число: "))
-                dy = float(input("Введите абсолютную погрешность второго числа: "))
-
-                if choice == 4 and y == 0:
+                a = float(input("Введите число a: "))
+                da = float(input("Введите абсолютную погрешность Δa: "))
+                b = float(input("Введите число b: "))
+                db = float(input("Введите абсолютную погрешность Δb: "))
+                
+                if choice == 4 and b == 0:  
                     print("Деление на ноль невозможно")
                     continue
-                if dx < 0 or dy < 0:
+                if da < 0 or db < 0:
                     print("Погрешность не может быть отрицательной")
                     continue
                 break
             except ValueError:
                 print("Пожалуйста, введите числа")
-
-        if choice == 1:
-            result = x + y
-            error = dx + dy
+        
+        if choice == 1:  # Сложение
+            result = a + b         
+            error_abs = da + db
             operation = "+"
-
-        elif choice == 2:
-            result = x - y
-            error = dx + dy
+            
+        elif choice == 2:  # Вычитание
+            result = a - b
+            error_abs = da + db
             operation = "-"
-
-        elif choice == 3:
-            result = x * y
-            if x != 0 and y != 0:
-                rel_error_x = dx / abs(x)
-                rel_error_y = dy / abs(y)
-                error = abs(result) * (rel_error_x + rel_error_y)
+            
+        elif choice == 3:  # Умножение
+            result = a * b
+            error_abs = abs(a) * db + abs(b) * da
+            if a != 0 and b != 0:
+                error_rel = (da / abs(a)) + (db / abs(b))
             else:
-                error = 0
-            operation = "*"
-
-        elif choice == 4:
-            result = x / y
-            if x != 0 and y != 0:
-                rel_error_x = dx / abs(x)
-                rel_error_y = dy / abs(y)
-                error = abs(result) * (rel_error_x + rel_error_y)
+                error_rel = 0
+            operation = "×"
+            
+        elif choice == 4:  # Деление
+            result = a / b
+            error_abs = (abs(b) * da + abs(a) * db) / (b ** 2)
+            if a != 0 and b != 0:
+                error_rel = (da / abs(a)) + (db / abs(b))
             else:
-                error = 0
+                error_rel = 0
             operation = "/"
-
-        elif choice == 5:
-            result = x ** y
-            if x > 0:
-                if x != 0:
-                    rel_error_x = dx / abs(x)
-                else:rel_error_x = 0
-                error = abs(result) * (abs(y) * rel_error_x + abs(math.log(abs(x))) * dy)
-            else:
-                error = 0
-            operation = "^"
-
-        print("\nРезультат:")
-        print(f"({x} ± {dx}) {operation} ({y} ± {dy}) = {result:.6f} ± {error:.6f}")
-
-    print(f"\nИтог: {result:.6f} ± {error:.6f}")
-
-    if error > 0:
-
-        error_order = 10 ** math.floor(math.log10(error))
-
-        if error / error_order < 3:
-            rounded_error = round(error / error_order, 1) * error_order
+        
+        print("\nРезультат по формулам из таблицы:")
+        print(f"a = {a} ± {da}")
+        print(f"b = {b} ± {db}")
+        
+        if choice == 1 or choice == 2:
+            print(f"a {operation} b = {result:.6f}")
+            print(f"Абсолютная погрешность Δ = {error_abs:.6f}")
+            print(f"Итог: {result:.6f} ± {error_abs:.6f}")
         else:
-            rounded_error = round(error / error_order) * error_order
+            print(f"a {operation} b = {result:.6f}")
+            print(f"Абсолютная погрешность Δ = {error_abs:.6f}")
+            print(f"Относительная погрешность δ = {error_rel:.6f}")
+            print(f"Итог: {result:.6f} ± {error_abs:.6f}")
+    
+    if error_abs > 0:
+        error_order = 10 ** math.floor(math.log10(error_abs))
+        
+        if error_abs / error_order < 3:
+            rounded_error = round(error_abs / error_order, 1) * error_order
+        else:
+            rounded_error = round(error_abs / error_order) * error_order
+        
         if error_order >= 1:
             decimals = 0
         else:
             decimals = -int(math.floor(math.log10(error_order)))
-
+        
         rounded_result = round(result, decimals)
-
+        
         print(f"\nРекомендуемое округление:")
         print(f"{rounded_result} ± {rounded_error}")
-
-print("ПРОГРАММА ЗАПУЩЕНА ")
+        
+        result_str = f"{rounded_result:.{max(decimals, 0)}f}"
+        error_str = f"{rounded_error:.{max(decimals, 0)}f}"
+        print(f"Проверка: {result_str} ± {error_str}")
 
 while True:
     calculate_error()
-    print("\n" + "=" * 30)
-
-    again = input("Хотите выполнить еще расчет? (да/нет): ").lower()
+    print("\n" + "=" * 40)
+    
+    again = input("Выполнить еще расчет? (да/нет): ").lower()
     if again not in ['да', 'д', 'yes', 'y']:
-        print("До свидания!")
+        print("Работа завершена. До свидания!")
         break
 
-print("ПРОГРАММА ЗАВЕРШЕНА")
+print("=" * 40)
