@@ -1,81 +1,146 @@
 import math
 
-def read_value():
-    x = float(input("Введите число x: "))
-    dx = float(input("Введите его абсолютную погрешность Δx: "))
-    return x, dx
 
-def show(x, dx):
-    print(f"Результат: {x} ± {dx}")
+def calculate_error():
+    print("Калькулятор погрешностей")
+    print("=" * 30)
+    print("Операции:")
+    print("1. Сложение (+)")
+    print("2. Вычитание (-)")
+    print("3. Умножение (*)")
+    print("4. Деление (/)")
+    print("5. Возведение в степень (^)")
+    print("6. Квадратный корень (√)")
+    print("=" * 30)
 
-def add(a, da, b, db):
-    return a + b, da + db          # Δ(a+b) = Δa + Δb
 
-def sub(a, da, b, db):
-    return a - b, da + db          # Δ(a-b) = Δa + Δb 
-
-def mul(a, da, b, db):
-    # Δ(ab) ≈ |b|Δa + |a|Δb
-    return a * b, abs(b) * da + abs(a) * db
-
-def div(a, da, b, db):
-    # Δ(a/b) ≈ (Δa/|b|) + (|a|Δb/|b|²)
-    value = a / b
-    d = da / abs(b) + abs(a) * db / (abs(b) ** 2)
-    return value, d
-
-def power(a, da, n):
-    # Δ(a^n) ≈ |n * a^(n-1)| Δa
-    value = a ** n
-    d = abs(n * (a ** (n - 1))) * da
-    return value, d
-
-def root(a, da):
-    # y = sqrt(a), dy ≈ Δa / (2*sqrt(a))
-    value = math.sqrt(a)
-    d = da / (2 * value)
-    return value, d
-
-def main():
-    print("Калькулятор с погрешностями.")
-    x, dx = read_value()
     while True:
-        print("\nТекущее значение: ", end="")
-        show(x, dx)
-        print("Операции:")
-        print("1 — сложить")
-        print("2 — вычесть")
-        print("3 — умножить")
-        print("4 — разделить")
-        print("5 — возвести в степень")
-        print("6 — извлечь корень")
-        print("0 — выход")
+        try:
+            choice = int(input("Выберите операцию (1-6): "))
+            if 1 <= choice <= 6:
+                break
+            else:
+                print("Пожалуйста, введите число от 1 до 6")
+        except ValueError:
+            print("Пожалуйста, введите целое число")
 
-        cmd = input("Выберите операцию: ")
 
-        if cmd == "0":
-            break
-        elif cmd in ("1", "2", "3", "4"):
-            print("Введите второе число:")
-            y, dy = read_value()
-            if cmd == "1":
-                x, dx = add(x, dx, y, dy)
-            elif cmd == "2":
-                x, dx = sub(x, dx, y, dy)
-            elif cmd == "3":
-                x, dx = mul(x, dx, y, dy)
-            elif cmd == "4":
-                x, dx = div(x, dx, y, dy)
-        elif cmd == "5":
-            n = float(input("Степень n: "))
-            x, dx = power(x, dx, n)
-        elif cmd == "6":
-            x, dx = root(x, dx)
+    if choice == 6:
+        print("\nИзвлечение квадратного корня")
+        while True:
+            try:
+                x = float(input("Введите число: "))
+                dx = float(input("Введите абсолютную погрешность числа: "))
+                if x < 0:
+                    print("Нельзя извлечь корень из отрицательного числа")
+                    continue
+                if dx < 0:
+                    print("Погрешность не может быть отрицательной")
+                    continue
+                break
+            except ValueError:
+                print("Пожалуйста, введите числа")
+
+
+        result = math.sqrt(x)
+
+        error = (1 / (2 * math.sqrt(x))) * dx if x > 0 else 0
+
+        print("\nРезультат:")
+        print(f"√({x} ± {dx}) = {result:.6f} ± {error:.6f}")
+
+    else:
+        print("\nБинарная операция")
+        while True:
+            try:
+                x = float(input("Введите первое число: "))
+                dx = float(input("Введите абсолютную погрешность первого числа: "))
+                y = float(input("Введите второе число: "))
+                dy = float(input("Введите абсолютную погрешность второго числа: "))
+
+                if choice == 4 and y == 0:
+                    print("Деление на ноль невозможно")
+                    continue
+                if dx < 0 or dy < 0:
+                    print("Погрешность не может быть отрицательной")
+                    continue
+                break
+            except ValueError:
+                print("Пожалуйста, введите числа")
+
+        if choice == 1:
+            result = x + y
+            error = dx + dy
+            operation = "+"
+
+        elif choice == 2:
+            result = x - y
+            error = dx + dy
+            operation = "-"
+
+        elif choice == 3:
+            result = x * y
+            if x != 0 and y != 0:
+                rel_error_x = dx / abs(x)
+                rel_error_y = dy / abs(y)
+                error = abs(result) * (rel_error_x + rel_error_y)
+            else:
+                error = 0
+            operation = "*"
+
+        elif choice == 4:
+            result = x / y
+            if x != 0 and y != 0:
+                rel_error_x = dx / abs(x)
+                rel_error_y = dy / abs(y)
+                error = abs(result) * (rel_error_x + rel_error_y)
+            else:
+                error = 0
+            operation = "/"
+
+        elif choice == 5:
+            result = x ** y
+            if x > 0:
+                if x != 0:
+                    rel_error_x = dx / abs(x)
+                else:rel_error_x = 0
+                error = abs(result) * (abs(y) * rel_error_x + abs(math.log(abs(x))) * dy)
+            else:
+                error = 0
+            operation = "^"
+
+        print("\nРезультат:")
+        print(f"({x} ± {dx}) {operation} ({y} ± {dy}) = {result:.6f} ± {error:.6f}")
+
+    print(f"\nИтог: {result:.6f} ± {error:.6f}")
+
+    if error > 0:
+
+        error_order = 10 ** math.floor(math.log10(error))
+
+        if error / error_order < 3:
+            rounded_error = round(error / error_order, 1) * error_order
         else:
-            print("Неизвестная команда")
+            rounded_error = round(error / error_order) * error_order
+        if error_order >= 1:
+            decimals = 0
+        else:
+            decimals = -int(math.floor(math.log10(error_order)))
 
-    print("\nИтоговый результат:")
-    show(x, dx)
+        rounded_result = round(result, decimals)
 
-if __name__ == "__main__":
-    main()
+        print(f"\nРекомендуемое округление:")
+        print(f"{rounded_result} ± {rounded_error}")
+
+print("ПРОГРАММА ЗАПУЩЕНА ")
+
+while True:
+    calculate_error()
+    print("\n" + "=" * 30)
+
+    again = input("Хотите выполнить еще расчет? (да/нет): ").lower()
+    if again not in ['да', 'д', 'yes', 'y']:
+        print("До свидания!")
+        break
+
+print("ПРОГРАММА ЗАВЕРШЕНА")
