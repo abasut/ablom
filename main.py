@@ -22,7 +22,7 @@ def calculate_error():
         except ValueError:
             print("Пожалуйста, введите целое число")
     
-    if choice == 5:  # Возведение в степень
+    if choice == 5:  
         print("\n--- Возведение в степень a^n ---")
         while True:
             try:
@@ -37,17 +37,13 @@ def calculate_error():
             except ValueError:
                 print("Пожалуйста, введите числа")
         
-        # Вычисление по формулам из таблицы
-        # a^n
         result = a ** n
         
-        # Абсолютная погрешность: Δ(a^n) = n * a^(n-1) * Δa
         if n != 0:
             error_abs = abs(n) * (abs(a) ** (n - 1)) * da
         else:
-            error_abs = 0  # a^0 = 1 всегда, погрешность 0
+            error_abs = 0 
         
-        # Относительная погрешность: δ(a^n) = n * δ(a) = n * (Δa/|a|)
         if a != 0:
             error_rel = abs(n) * (da / abs(a))
         else:
@@ -60,7 +56,7 @@ def calculate_error():
         print(f"Относительная погрешность  = {error_rel:.6f}")
         print(f"Итог: {result:.6f} ± {error_abs:.6f}")
         
-    elif choice == 6:  # Квадратный корень
+    elif choice == 6: 
         print("\n--- Извлечение квадратного корня √a ---")
         while True:
             try:
@@ -77,7 +73,7 @@ def calculate_error():
             except ValueError:
                 print("Пожалуйста, введите числа")
         
-        n = 2  # квадратный корень
+        n = 2 
         result = math.sqrt(a)
         
         if a > 0:
@@ -97,7 +93,7 @@ def calculate_error():
         print(f"Относительная погрешность δ = {error_rel:.6f}")
         print(f"Итог: {result:.6f} ± {error_abs:.6f}")
         
-    else:  # Операции с двумя числами: +, -, ×, /
+    else:  
         print("\n--- Операция с двумя числами ---")
         while True:
             try:
